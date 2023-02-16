@@ -1,0 +1,24 @@
+name: Deploy PRODUCTION
+
+on:
+  push:
+    branches: ["production"]
+
+jobs:
+  build:
+    runs-on:
+      - self-hosted
+      - production-server
+    steps:
+      - uses: actions/checkout@v3
+      - run: node -v
+      - run: npm install
+      - run: npm run build
+
+  deploy:
+    needs: build
+    runs-on:
+      - self-hosted
+      - production-server
+    steps:
+      - run: pm2 start ecosystem.config.js --env production
